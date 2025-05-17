@@ -51,7 +51,7 @@ export default async function DropPage({ params }: Props) {
         <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="max-w-2xl mx-auto">
             <div className="max-w-md mx-auto rounded-lg overflow-hidden shadow-xl mb-4">
-              <div className="aspect-w-1 aspect-h-1 max-h-[300px]">
+              <div className="aspect-square max-h-[300px]">
                 <img
                   src={drop.coverImage}
                   alt={drop.title}
