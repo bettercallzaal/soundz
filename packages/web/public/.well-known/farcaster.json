@@ -1,0 +1,13 @@
+{
+  "frame": {
+    "version": "1",
+    "name": "ZoundZ",
+    "iconUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/logo.png",
+    "homeUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app",
+    "imageUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/og-image.png",
+    "buttonTitle": "🎵 Bid Now",
+    "splashImageUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/splash.png",
+    "splashBackgroundColor": "#000000",
+    "webhookUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/api/webhook"
+  }
+}

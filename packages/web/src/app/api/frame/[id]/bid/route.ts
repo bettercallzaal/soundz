@@ -1,4 +1,42 @@
 import { NextRequest } from 'next/server'
+import { gql } from '@apollo/client'
+import { client } from '@/lib/apollo'
+import type { Auction } from '@/lib/types'
+
+async function getAuctionById(id: string): Promise<Auction | null> {
+  try {
+    const { data } = await client.query({
+      query: gql`
+        query GetAuction($id: ID!) {
+          auctions(where: { id: $id }) {
+            id
+            tokenId
+            title
+            description
+            artist
+            coverImage
+            audioUrl
+            highestBid
+            endTime
+            bids {
+              id
+              amount
+              bidder
+              timestamp
+              comment
+            }
+          }
+        }
+      `,
+      variables: { id }
+    })
+
+    return data.auctions[0] || null
+  } catch (error) {
+    console.error('Error fetching auction:', error)
+    return null
+  }
+}
 
 export async function POST(
   request: NextRequest,
@@ -27,29 +65,70 @@ export async function POST(
     }
 
     // Get the current auction data
-    const drop = {
-      id: params.id,
-      title: `Track #${params.id}`,
-      artist: '0x1234...',
-      coverImage: `https://picsum.photos/800/400?random=${params.id}`,
-      highestBid: '0.5',
-      endTime: new Date(Date.now() + 3600000).toISOString(),
+    const auction = await getAuctionById(params.id)
+    if (!auction) {
+      return Response.json({
+        frames: [{
+          version: 'vNext',
+          image: 'https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/404.png',
+          aspectRatio: '1:1',
+          title: '🔍 Drop Not Found',
+          description: 'Check out other available drops',
+          buttons: [{
+            label: '🎵 Browse',
+            action: 'link',
+            target: process.env.NEXT_PUBLIC_API_URL
+          }]
+        }]
+      })
     }
+
+    // Calculate time remaining
+    const endTime = new Date(parseInt(auction.endTime) * 1000)
+    const timeRemaining = Math.max(0, Math.floor((endTime.getTime() - Date.now()) / 1000 / 60))
+    
+    if (timeRemaining <= 0) {
+      return Response.json({
+        frames: [{
+          version: 'vNext',
+          image: auction.coverImage,
+          aspectRatio: '1:1',
+          title: '🏁 Auction Complete',
+          description: `${auction.title}\nSold for ${parseFloat(auction.highestBid) / 1e18} ETH`,
+          buttons: [{
+            label: '🏆 Results',
+            action: 'link',
+            target: `${process.env.NEXT_PUBLIC_API_URL}/drop/${params.id}`
+          }]
+        }]
+      })
+    }
+
+    // Format current bid
+    const currentBid = parseFloat(auction.highestBid) / 1e18
+    const minBid = currentBid * 1.1 // 10% higher than current bid
 
     // Return the bid input frame
     return Response.json({
       frames: [{
         version: 'vNext',
-        image: drop.coverImage,
-        title: `Place Bid on ${drop.title}`,
+        image: auction.coverImage,
+        aspectRatio: '1:1',
+        title: auction.title.length > 30 ? auction.title.slice(0, 27) + '...' : auction.title,
+        description: `by ${auction.artist}\n💰 ${currentBid.toFixed(3)} ETH | ⏱️ ${timeRemaining}m left`,
         buttons: [
           {
-            label: 'Confirm Bid',
-            action: 'post',
+            label: '💫 Bid',
+            action: 'post'
+          },
+          {
+            label: '🎵 View',
+            action: 'link',
+            target: `${process.env.NEXT_PUBLIC_API_URL}/drop/${params.id}`
           }
         ],
         input: {
-          text: 'Enter bid amount in ETH',
+          text: `Min: ${minBid.toFixed(3)} ETH`
         },
         postUrl: `${process.env.NEXT_PUBLIC_API_URL}/api/frame/${params.id}/confirm`
       }]
