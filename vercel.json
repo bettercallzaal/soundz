@@ -1,9 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "name": "zoundz",
   "version": 2,
   "framework": "nextjs",
-  "buildCommand": "cd packages/web && pnpm build",
-  "outputDirectory": "packages/web/.next",
-  "installCommand": "pnpm install"
+  "workspaces": [
+    {
+      "name": "web",
+      "path": "packages/web"
+    }
+  ]
 }
