@@ -4,7 +4,6 @@
   "version": 2,
   "framework": "nextjs",
   "buildCommand": "cd packages/web && pnpm build",
-  "outputDirectory": ".next",
-  "installCommand": "pnpm install",
-  "rootDirectory": "packages/web"
+  "outputDirectory": "packages/web/.next",
+  "installCommand": "pnpm install"
 }
