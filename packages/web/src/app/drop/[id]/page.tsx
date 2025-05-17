@@ -11,7 +11,7 @@ async function getDropData(id: string) {
     id,
     title: `Track #${id}`,
     artist: '0x1234...',
-    coverImage: `https://picsum.photos/800/400?random=${id}`,
+    coverImage: `https://picsum.photos/300/300?random=${id}`,
     highestBid: '0.5',
     endTime: new Date(Date.now() + 3600000).toISOString(),
   }
@@ -47,31 +47,33 @@ export default async function DropPage({ params }: Props) {
       />
 
       <main className="min-h-screen bg-black">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
-          <div className="max-w-3xl mx-auto">
-            <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden shadow-xl mb-6 sm:mb-8">
-              <img
-                src={drop.coverImage}
-                alt={drop.title}
-                className="w-full h-full object-cover"
-              />
+        <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="max-w-md mx-auto rounded-lg overflow-hidden shadow-xl mb-4 sm:mb-6">
+              <div className="aspect-w-1 aspect-h-1 max-h-[300px]">
+                <img
+                  src={drop.coverImage}
+                  alt={drop.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
             
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">{drop.title}</h1>
-                <p className="text-lg text-gray-400">By {drop.artist}</p>
+            <div className="space-y-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">{drop.title}</h1>
+                <p className="text-sm sm:text-base text-gray-400">By {drop.artist}</p>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-gray-900 p-4 sm:p-6 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Current Bid</p>
-                  <p className="text-xl sm:text-2xl font-bold text-white">{drop.highestBid} ETH</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-gray-900 p-3 rounded-lg">
+                  <p className="text-xs text-gray-400">Current Bid</p>
+                  <p className="text-lg sm:text-xl font-bold text-white">{drop.highestBid} ETH</p>
                 </div>
 
-                <div className="bg-gray-900 p-4 sm:p-6 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Auction Ends</p>
-                  <p className="text-xl sm:text-2xl font-bold text-white">
+                <div className="bg-gray-900 p-3 rounded-lg">
+                  <p className="text-xs text-gray-400">Auction Ends</p>
+                  <p className="text-lg sm:text-xl font-bold text-white">
                     {new Date(drop.endTime).toLocaleString()}
                   </p>
                 </div>
