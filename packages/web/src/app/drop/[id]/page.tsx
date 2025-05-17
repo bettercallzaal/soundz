@@ -40,8 +40,10 @@ export default async function DropPage({ params }: Props) {
       <FrameMetadata
         title={`${drop.title} by ${drop.artist}`}
         image={drop.coverImage}
-        buttonText="Place Bid"
+        buttons={[{ text: '💫 Place Bid' }]}
         postUrl={postUrl}
+        aspectRatio="1:1"
+        description={`Current bid: ${drop.highestBid} ETH`}
       />
 
       <main className="min-h-screen bg-black">
