@@ -1,0 +1,117 @@
+---
+title: Getting Started
+description: Get started building Mini Apps
+---
+
+# Getting Started
+
+import { Caption } from '../../components/Caption';
+
+## Overview
+
+Mini apps are web apps built with HTML, CSS, and Javascript that can be discovered
+and used within Farcaster clients. You can use an SDK to access native
+Farcaster features, like authentication, sending notifications, and interacting
+with the user's wallet. 
+
+
+## Quick Start
+
+For new projects, you can set up an app using the
+[@farcaster/create-mini-app](https://github.com/farcasterxyz/frames/tree/main/packages/create-mini-app)
+CLI. This will prompt you to set up a project for your app.
+
+:::code-group
+
+```bash [npm]
+npm create @farcaster/mini-app
+```
+
+```bash [pnpm]
+pnpm create @farcaster/mini-app
+```
+
+```bash [yarn]
+yarn create @farcaster/mini-app
+```
+:::
+
+Remember, you can use whatever your favorite web framework is to build Mini
+Apps so if these options aren't appealing you can setup the SDK in your own
+project by following the instructions below.
+
+
+## Manual Setup
+
+For existing projects, install the Frames SDK:
+
+
+### Package Manager
+
+:::code-group
+
+```bash [npm]
+npm install @farcaster/frame-sdk
+```
+
+```bash [pnpm]
+pnpm add @farcaster/frame-sdk
+```
+
+```bash [yarn]
+yarn add @farcaster/frame-sdk
+```
+
+:::
+
+
+### CDN
+
+If you're not using a package manager, you can also use the Frame SDK via an
+ESM-compatible CDN such as esm.sh. Simply add a `<script type="module">` tag to
+the bottom of your HTML file with the following content.
+
+```html
+<script type="module">
+  import { sdk } from 'https://esm.sh/@farcaster/frame-sdk'
+</script>
+```
+
+
+## Building with AI
+
+These docs are LLM friendly so that you use the latest models to build your
+applications.
+
+1. Use the Ask in ChatGPT buttons available on each page to interact with the
+documentation.
+
+<video autoPlay muted playsInline loop>
+  <source src="/ask_in_chatgpt.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+2. Use the <a class="vocs_Anchor vocs_Link vocs_Link_accent" href="/llms-full.txt">llms-full.txt</a> to keep your LLM up to date with these docs:
+
+<picture>
+  <img alt="setup mini app docs in cursor" src="/cursor-setup.png" width="auto" />
+</picture>
+
+<br/>
+
+<Caption>
+  Adding the Mini App docs to Cursor
+</Caption>
+
+### How does this work?
+
+This entire site is converted into a single markdown doc that can fit inside
+the context window of most LLMs. See [The /llms.txt file](https://llmstxt.org/)
+standards proposal for more information.
+
+## Next Steps
+
+You'll need to do a few more things before distributing your app to users:
+1. publish the app by providing information about who created it and how it should displayed
+2. make it sharable in feeds
+

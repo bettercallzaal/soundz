@@ -1,0 +1,15 @@
+{
+  "name": "@zoundz/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test -vvv",
+    "deploy:sepolia": "forge script script/Deploy.s.sol:Deploy --rpc-url $(grep BASE_SEPOLIA_RPC .env | cut -d '=' -f2) --broadcast --verify",
+    "verify": "forge verify-contract"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts-upgradeable": "^5.0.0"
+  }
+}

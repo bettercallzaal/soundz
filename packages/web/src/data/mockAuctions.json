@@ -1,0 +1,49 @@
+{
+  "auctions": [
+    {
+      "id": "1",
+      "tokenId": "1",
+      "title": "Neon Dreams",
+      "description": "A synthwave masterpiece that takes you on a journey through neon-lit streets and retro-futuristic soundscapes.",
+      "artist": "CyberWave",
+      "coverImage": "https://images.unsplash.com/photo-1614149162883-504ce4d13909",
+      "audioUrl": "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav",
+      "startTime": "1747374000",
+      "endTime": "1747460400",
+      "highestBid": "1500000000000000000",
+      "highestBidder": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+      "status": "STARTED",
+      "bids": [
+        {
+          "id": "bid1",
+          "bidder": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+          "amount": "1500000000000000000",
+          "timestamp": "1747374100",
+          "comment": "Love this track! 🎵"
+        },
+        {
+          "id": "bid2",
+          "bidder": "0x123d35Cc6634C0532925a3b844Bc454e4438f789",
+          "amount": "1000000000000000000",
+          "timestamp": "1747374000",
+          "comment": "Amazing vibes!"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "tokenId": "2",
+      "title": "Cosmic Harmony",
+      "description": "An ambient space odyssey that blends ethereal synthesizers with organic textures.",
+      "artist": "Stellar Sound",
+      "coverImage": "https://images.unsplash.com/photo-1539721972319-f9e2d7578608",
+      "audioUrl": "https://www2.cs.uic.edu/~i101/SoundFiles/ImperialMarch60.wav",
+      "startTime": "1747460400",
+      "endTime": "1747546800",
+      "highestBid": "2000000000000000000",
+      "highestBidder": "0x123d35Cc6634C0532925a3b844Bc454e4438f789",
+      "status": "CREATED",
+      "bids": []
+    }
+  ]
+}

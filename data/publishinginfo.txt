@@ -1,0 +1,202 @@
+---
+title: Publishing
+description: Guide to publishing Farcaster Mini Apps.
+---
+
+import { Caption } from '../../../components/Caption';
+
+# Publishing your app
+
+Publishing Mini Apps involves providing information like who developed the app,
+how it should be displayed, and what its capabilities are.
+
+Since Farcaster is a decentralized network with multiple clients, publishing is
+done by hosting a manifest file at `/.well-known/farcaster.json` on the domain
+your app is hosted on rather than submitting information directly to a single
+entity.
+
+![discover mini apps](/explore-preview.png)
+
+<Caption>
+  Published Mini Apps can be discovered in App Stores.
+</Caption>
+
+## Steps
+
+::::steps
+
+### Choose a domain
+
+A Mini App is associated with a single domain (i.e. rewards.warpcast.com). This
+domain serves as the identifier for your app and can't be changed later so
+you should choose a stable domain. 
+
+There's no limit on the number of apps you can create. You can create a separate 
+domain specifically for development purposes if needed.
+
+:::note
+A domain does not include the scheme (e.g. https) or path. It can optionally
+include a subdomain.
+- ✅ rewards.warpcast.com
+- ❌ https://rewards.warpcast.com
+:::
+
+
+### Host a manifest file
+
+Host a manifest file on your chosen domain at `/.well-known/farcaster.json`.
+
+For now we'll create an empty file:
+
+```sh
+touch public/.well-known/farcaster.json
+```
+
+### Define your application configuration
+
+A Mini App has metadata that is used by Farcaster clients to host your app. This
+data is specified in the `frame` property of the manifest and has the following properties:
+
+import ManifestAppConfigSchema from "../../../snippets/manifestAppConfigSchema.mdx"
+
+<ManifestAppConfigSchema />
+
+Here's an example `farcaster.json` file:
+
+```json
+{
+  "frame": {
+    "version": "1",
+    "name": "Yoink!",
+    "iconUrl": "https://yoink.party/logo.png",
+    "homeUrl": "https://yoink.party/framesV2/",
+    "imageUrl": "https://yoink.party/framesV2/opengraph-image",
+    "buttonTitle": "🚩 Start",
+    "splashImageUrl": "https://yoink.party/logo.png",
+    "splashBackgroundColor": "#f5f0ec",
+  }
+}
+```
+
+:::note
+You can omit `webhookUrl` for now. We'll show you how to set it up in the
+[sending notifications guide](/docs/guides/notifications).
+:::
+
+
+### Hybrid & SSR-friendly detection <span id="hybrid-detection"/>
+
+Some apps serve **both** as a Farcaster Mini App and a website from the same
+domain.  When you want to fetch specific resources **during server-side rendering (SSR)** or
+conditionally lazy-load the SDK on the client, add a lightweight flag that only
+Mini-App launch URLs include
+
+**Two suggested patterns**
+
+| Pattern | How it looks | Why use it |
+|---------|--------------|------------|
+| **Dedicated path** | `/your/path/.../miniapp` | Easiest to match on the server |
+| **Well-known query param** | `https://example.com/page?miniApp=true` | Works when a single page serves both modes |
+
+:::note
+Treat these markers as a **best-effort hint, not proof**.  
+Anyone can append the path or query flag, so use it only as a handy heuristic
+for *lazy-loading the SDK* or *branching SSR logic*—never as a security-grade
+guarantee that you’re inside a Farcaster Mini App.
+:::
+
+#### Example
+
+```ts
+// app/layout.tsx
+'use client'
+import { useEffect } from 'react'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    const isMini =
+      url.pathname.startsWith('/mini') ||
+      url.searchParams.get('miniApp') === 'true'
+
+    if (isMini) {
+      import('@farcaster/frame-sdk').then(({ sdk }) => {
+        // Mini-App–specific bootstrap here
+        // e.g. sdk.actions.ready()
+      })
+    }
+  }, [])
+
+  return children
+}
+```
+
+On the server you can do the same check to skip expensive Mini App work during
+SSR.
+
+## Verifying ownership
+
+A Mini App is owned by a single Farcaster account. This lets users know who
+they are interacting with and developers get credit for their work.
+
+:::tip
+Verified Mini Apps are automatically eligible for [Warpcast Developer
+Rewards](https://warpcast.com/~/mini-apps/rewards) that are paid out weekly
+based on usage and onchain transactions.
+:::
+
+![verified author ](/verified_author.png)
+
+Verification is done by placing a cryptographically signed message in the
+`accountAssociation` property of your `farcaster.json`. 
+
+You can generate a signed account association object using the [Mini App
+Manifest Tool](https://warpcast.com/~/developers/new) in Warpcast. Take
+the output from that tool and update your `farcaster.json` file.
+
+:::warning
+The domain you host the file on must exactly match the domain you entered in
+the Warpcast tool.
+:::
+
+Here's an example `farcaster.json` file for the domain `yoink.party` with the
+account association:
+
+```json
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjkxNTIsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwMmVmNzkwRGQ3OTkzQTM1ZkQ4NDdDMDUzRURkQUU5NDBEMDU1NTk2In0",
+    "payload": "eyJkb21haW4iOiJyZXdhcmRzLndhcnBjYXN0LmNvbSJ9",
+    "signature": "MHgxMGQwZGU4ZGYwZDUwZTdmMGIxN2YxMTU2NDI1MjRmZTY0MTUyZGU4ZGU1MWU0MThiYjU4ZjVmZmQxYjRjNDBiNGVlZTRhNDcwNmVmNjhlMzQ0ZGQ5MDBkYmQyMmNlMmVlZGY5ZGQ0N2JlNWRmNzMwYzUxNjE4OWVjZDJjY2Y0MDFj"
+  },
+  "frame": {
+    "version": "1",
+    "name": "Rewards",
+    "iconUrl": "https://rewards.warpcast.com/app.png",
+    "splashImageUrl": "https://rewards.warpcast.com/logo.png",
+    "splashBackgroundColor": "#000000",
+    "homeUrl": "https://rewards.warpcast.com",
+    "webhookUrl": "https://client.warpcast.com/v1/creator-rewards-notifs-webhook",
+    "subtitle": "Top Warpcast creators",
+    "description": "Climb the leaderboard and earn rewards by being active on Warpcast.",
+    "screenshotUrls": [
+      "https://rewards.warpcast.com/screenshot1.png",
+      "https://rewards.warpcast.com/screenshot2.png",
+      "https://rewards.warpcast.com/screenshot3.png"
+    ],
+    "primaryCategory": "social",
+    "tags": [
+      "rewards",
+      "leaderboard",
+      "warpcast",
+      "earn"
+    ],
+    "heroImageUrl": "https://rewards.warpcast.com/og.png",
+    "tagline": "Top Warpcast creators",
+    "ogTitle": "Rewards",
+    "ogDescription": "Climb the leaderboard and earn rewards by being active on Warpcast.",
+    "ogImageUrl": "https://rewards.warpcast.com/og.png"
+  }
+}
+```
+
