@@ -12,8 +12,13 @@ export const config = createConfig({
     [customBaseSepolia.id]: http()
   },
   connectors: [
-    injected(),
-    walletConnect({ projectId }),
-    farcasterFrame()
+    farcasterFrame(),
+    walletConnect({ 
+      projectId,
+      showQrModal: false // Disable QR modal in Frames
+    }),
+    injected({
+      shimDisconnect: true // Handle provider disconnects gracefully
+    })
   ]
 })

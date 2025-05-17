@@ -2,12 +2,17 @@
   "frame": {
     "version": "1",
     "name": "ZoundZ",
-    "iconUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/logo.png",
-    "homeUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app",
-    "imageUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/og-image.png",
+    "iconUrl": "http://localhost:3002/logo.png",
+    "homeUrl": "http://localhost:3002/mini-app",
+    "imageUrl": "http://localhost:3002/og-image.png",
     "buttonTitle": "🎵 Bid Now",
-    "splashImageUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/splash.png",
+    "splashImageUrl": "http://localhost:3002/splash.png",
     "splashBackgroundColor": "#000000",
-    "webhookUrl": "https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/api/webhook"
+    "description": "Bid on exclusive music drops",
+    "primaryCategory": "music",
+    "tags": ["music", "nft", "auction"],
+    "ogTitle": "ZoundZ - Music NFT Auctions",
+    "ogDescription": "Discover and bid on exclusive music drops",
+    "ogImageUrl": "http://localhost:3002/og-image.png"
   }
 }

@@ -1,0 +1,22 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+
+[profile.default.optimizer_details]
+enabled = true
+runs = 200
+
+[profile.default.fuzz]
+runs = 1000
+
+[profile.default.invariant]
+runs = 1000
+depth = 100
+
+[profile.ci]
+fuzz_runs = 10000
+invariant_runs = 10000
+
+[etherscan]
+base = { key = "${BASESCAN_API_KEY}" }

@@ -38,14 +38,11 @@ async function getAuctionById(id: string): Promise<Auction | null> {
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    
-    // Validate the Farcaster Frame message
+
+    // Validate the Frame request
     const validateRes = await fetch('https://api.neynar.com/v2/farcaster/frame/validate', {
       method: 'POST',
       headers: {
@@ -55,17 +52,29 @@ export async function POST(
       body: JSON.stringify(body)
     })
 
-    const validation = await validateRes.json()
-    
-    if (!validation.valid) {
+    const validationData = await validateRes.json()
+    if (!validationData.valid) {
       return Response.json({
         frames: [{
           version: 'vNext',
-          image: 'https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/error.png',
-          title: 'Invalid Request',
-          description: 'Please try again from a valid Farcaster client.',
+          image: `${process.env.NEXT_PUBLIC_API_URL}/error.png`,
+          title: 'Error',
+          description: validationData.message || 'Invalid frame request'
+        }]
+      }, { status: 400 })
+    }
+
+    // Get the bid amount from input
+    const bidAmount = parseFloat(body.untrustedData.inputText)
+    if (isNaN(bidAmount) || bidAmount <= 0) {
+      return Response.json({
+        frames: [{
+          version: 'vNext',
+          image: `${process.env.NEXT_PUBLIC_API_URL}/error.png`,
+          title: 'Invalid Bid',
+          description: 'Please enter a valid bid amount',
           buttons: [{
-            label: '🔙 Go Back',
+            label: '↩️ Try Again',
             action: 'post',
             target: `${process.env.NEXT_PUBLIC_API_URL}/api/frame/${params.id}/bid`
           }]
@@ -73,16 +82,17 @@ export async function POST(
       })
     }
 
-    // Get current auction state
+    // Get auction data
     const auction = await getAuctionById(params.id)
     if (!auction) {
       return Response.json({
         frames: [{
           version: 'vNext',
-          image: 'https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/404.png',
-          title: 'Auction Not Found',
+          image: `${process.env.NEXT_PUBLIC_API_URL}/not-found.png`,
+          title: '🔍 Drop Not Found',
+          description: 'This drop no longer exists',
           buttons: [{
-            label: '🎵 Browse Drops',
+            label: '🎵 Browse Other Drops',
             action: 'link',
             target: process.env.NEXT_PUBLIC_API_URL
           }]
@@ -90,62 +100,37 @@ export async function POST(
       })
     }
 
-    // Calculate time remaining
-    const endTime = new Date(parseInt(auction.endTime) * 1000)
+    // Check if auction ended
+    const endTime = new Date(auction.endTime)
     const timeRemaining = Math.max(0, Math.floor((endTime.getTime() - Date.now()) / 1000 / 60))
-    
     if (timeRemaining <= 0) {
       return Response.json({
         frames: [{
           version: 'vNext',
-          image: auction.coverImage,
-          title: 'Auction Ended',
-          description: `Final bid: ${parseFloat(auction.highestBid) / 1e18} ETH`,
+          image: `${process.env.NEXT_PUBLIC_API_URL}/api/frame/${params.id}/image`,
+          title: '⏰ Auction Ended',
+          description: `Winning bid: ${auction.highestBid} ETH`,
           buttons: [{
-            label: '🏆 View Results',
+            label: '🎵 Browse Other Drops',
             action: 'link',
-            target: `${process.env.NEXT_PUBLIC_API_URL}/drop/${params.id}`
+            target: process.env.NEXT_PUBLIC_API_URL
           }]
         }]
       })
     }
 
-    // Parse and validate bid amount
-    const bidAmount = parseFloat(body.untrustedData.inputText)
-    if (isNaN(bidAmount) || bidAmount <= 0) {
-      return Response.json({
-        frames: [{
-          version: 'vNext',
-          image: 'https://soundz-web-111-kdiu4r6g2-bettercallzaals-projects.vercel.app/error.png',
-          aspectRatio: '1:1',
-          title: '⚠️ Invalid Amount',
-          description: 'Please enter a valid ETH amount',
-          buttons: [
-            {
-              label: '🔙 Try Again',
-              action: 'post',
-              target: `${process.env.NEXT_PUBLIC_API_URL}/api/frame/${params.id}/bid`
-            }
-          ]
-        }]
-      })
-    }
-
-    // Check minimum bid requirement
-    const currentBid = parseFloat(auction.highestBid) / 1e18
+    // Check if bid is high enough
+    const currentBid = parseFloat(auction.highestBid)
     const minBid = currentBid * 1.1 // 10% higher than current bid
-
     if (bidAmount < minBid) {
       return Response.json({
         frames: [{
           version: 'vNext',
-          image: auction.coverImage,
+          image: `${process.env.NEXT_PUBLIC_API_URL}/api/frame/${params.id}/image`,
           title: 'Bid Too Low',
-          description: `Minimum bid required: ${minBid.toFixed(3)} ETH`,
-          buttons: [
-            {
-              label: '🔙 Try Again',
-              action: 'post',
+          description: `Minimum bid: ${minBid.toFixed(3)} ETH`,
+          buttons: [{
+            label: '↩️ Try Again',
               target: `${process.env.NEXT_PUBLIC_API_URL}/api/frame/${params.id}/bid`
             }
           ]

@@ -1,8 +1,22 @@
+'use client'
+
+import { useEffect } from 'react'
 import { HeroAuction } from '@/components/HeroAuction'
 import { PastDrops } from '@/components/PastDrops'
 import { UpcomingDrops } from '@/components/UpcomingDrops'
 
 export default function Home() {
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    const isMiniApp = url.searchParams.get('miniApp') === 'true'
+
+    if (isMiniApp) {
+      import('@farcaster/frame-sdk').then(({ sdk }) => {
+        sdk.actions.ready()
+      })
+    }
+  }, [])
+
   return (
     <main className="container mx-auto px-4 py-8 space-y-16">
       <HeroAuction />
