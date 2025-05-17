@@ -1,9 +1,8 @@
 import { gql } from '@apollo/client'
-import { getClient } from './apollo'
+import { client } from './apollo'
 import type { Auction } from './types'
 
 export async function getAuctionById(id: string): Promise<Auction | null> {
-  const client = getClient()
   
   try {
     const { data } = await client.query({
