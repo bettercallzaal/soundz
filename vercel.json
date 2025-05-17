@@ -3,7 +3,8 @@
   "name": "zoundz",
   "version": 2,
   "framework": "nextjs",
-  "buildCommand": "pnpm --filter @zoundz/web build",
-  "outputDirectory": "packages/web/.next",
-  "installCommand": "pnpm install"
+  "buildCommand": "cd packages/web && pnpm build",
+  "outputDirectory": ".next",
+  "installCommand": "pnpm install",
+  "rootDirectory": "packages/web"
 }
